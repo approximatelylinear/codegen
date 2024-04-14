@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "codegen"
+version = "0.1.0"
+description = "Code generation using llms"
+authors = ["MJ Berends <mjr.berends@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+packages = [
+    { include = "codegen", from = "backend"},
+    { include = "codegen_cli", from = "cli"},
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+python-dotenv = "^1.0.1"
+openai = "^1.17.1"
+cohere = "^5.2.5"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+
+[tool.poetry.scripts]
+cli = "codegen_cli.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

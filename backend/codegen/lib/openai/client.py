@@ -33,13 +33,3 @@ class Generator:
         )
 
         return completion.choices[0].message.content
-
-
-def test():
-    generator = Generator("gpt-3.5-turbo")
-    print(generator.generate(
-        "Compose a poem that explains the concept of recursion in programming."))
-
-
-if __name__ == '__main__':
-    test()

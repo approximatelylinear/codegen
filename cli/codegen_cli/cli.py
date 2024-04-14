@@ -29,11 +29,12 @@ def main():
                     else:
                         file_lang = 'plaintext'
                     code += f"\n\n<file>{file}</file>\n```{file_lang}\n{contents}\n```\n"
-                    files += f"\n{file}"
             except Exception as e:
                 print(f"Error reading file {file}: {e}")
 
-    result = generate_openai_code(args.problem, args.language, args.files, args.code)
+    result = generate_openai_code(problem=args.problem, language=args.language, files=args.files, code=code)
+    print("\nGenerating code...\n")
+
     for item in result:
         print("Code block:")
         if item.get('filename'):

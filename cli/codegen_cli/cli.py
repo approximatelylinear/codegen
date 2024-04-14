@@ -57,6 +57,7 @@ def main():
     parser.add_argument('--language', type=str, default='python', help='A string that specifies the programming language to be used (default: python)')
     parser.add_argument('--files', nargs='+', type=str, help='A list of strings that specify the files to be used')
     parser.add_argument('--code', type=str, help='A string that specifies existing code to reference')
+    parser.add_argument('--output-dir', type=str, help='Output directory for generated code files')
 
     args = parser.parse_args()
 
@@ -69,14 +70,32 @@ def main():
     result = generate_openai_code(problem=args.problem, language=args.language, files=args.files, code=code)
     print(color_red("\nGenerating code...\n"))
 
+    if args.output_dir and not os.path.exists(args.output_dir):
+        print(f"Directory '{args.output_dir}' does not exist.")
+        create_dir = input("Do you want to create this directory? (y/N): ")
+        if create_dir.lower().strip() in ('y'):
+            os.makedirs(args.output_dir)
+            print(f"Directory '{args.output_dir}' created.")
+        else:
+            print(color_red('Skipping directory creation...'))
+
     for item in result:
-        print(color_red("Code block:"))
+        print(color_red("Generated Code block:\n"))
         if item.get('filename'):
             print(f"{color_red('Filename')}: {item['filename']}")
         if item.get('language'):
             print(f"{color_red('Language')}: {color_red(item['language'])}")
         if item.get('code'):
             print(f"{color_red('Code')}:\n{item['code']}\n")
+        if item.get('filename'):
+            output_file = os.path.join(args.output_dir, item['filename'])
+            save_file = input(f"Do you want to save the content to  {color_red(output_file)}? (y/N): ")
+            if save_file.strip().lower() == 'y':
+                with open(output_file, 'w') as f:
+                    f.write(item['code'].strip() + '\n')
+                    print(f"Code saved to {color_red(output_file)}")
+            else:
+                print(color_red(f"Did not save {color_red(item.get('filename'))}"))
 
 if __name__ == "__main__":
     main()

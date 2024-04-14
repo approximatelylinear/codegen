@@ -26,7 +26,6 @@ class Generator:
         ]
         if user_prompt:
             messages.append({"role": "user", "content": user_prompt})
-        print(f"Messages: {messages}")
         completion = self.client.chat.completions.create(
             model=self.model,
             messages=messages

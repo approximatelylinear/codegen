@@ -20,6 +20,12 @@ def get_language(file):
         return 'javascript'
     elif file.endswith('.toml'):
         return 'toml'
+    elif file.endswith('.jsx'):
+        return 'jsx'
+    elif file.endswith('.css'):
+        return 'css'
+    elif file.endswith('.html'):
+        return 'html'
     else:
         return 'plaintext'
 
@@ -53,21 +59,34 @@ def read_code(file):
 
 def main():
     parser = argparse.ArgumentParser(description='Call the function generate_openai_code with specified arguments')
-    parser.add_argument('problem', type=str, help='A string that describes the problem to be solved')
+    parser.add_argument('--problem', type=str, default=None, help='A string that describes the problem to be solved')
     parser.add_argument('--language', type=str, default='python', help='A string that specifies the programming language to be used (default: python)')
     parser.add_argument('--files', nargs='+', type=str, help='A list of strings that specify the files to be used')
     parser.add_argument('--code', type=str, help='A string that specifies existing code to reference')
     parser.add_argument('--output-dir', type=str, help='Output directory for generated code files')
+    parser.add_argument('--problem-file', type=str, help='A file containing the problem statement. Can be used in place of providing a problem on the command-line.')
 
     args = parser.parse_args()
 
     code = args.code or ''
 
+    problem = args.problem
+    if args.problem_file:
+        if problem:
+            print(color_red("Both problem and problem-file provided. Using the problem provided on the command-line."))
+        else:
+            with open(args.problem_file) as f:
+                print(f"{color_cyan('Reading problem statement from')} {args.problem_file}...")
+                problem = f.read()
+    if problem is None:
+        print(color_red("Problem statement is required."))
+        return
+
     if args.files:
         for file in args.files:
             code += read_code(file)
 
-    result = generate_openai_code(problem=args.problem, language=args.language, files=args.files, code=code)
+    result = generate_openai_code(problem=problem, language=args.language, files=args.files, code=code)
     print(color_red("\nGenerating code...\n"))
 
     if args.output_dir and not os.path.exists(args.output_dir):
